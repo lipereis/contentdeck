@@ -42,6 +42,14 @@ def database():
         """))
         conn.execute(text("UPDATE posts SET theme = 'cinema' WHERE external_id <> '90000000000000002'"))
         conn.execute(text("UPDATE posts SET theme = 'edicao' WHERE external_id = '90000000000000002'"))
+        # experimento: post 001 na variante 'com', os outros dois na 'sem'
+        conn.execute(text("INSERT INTO experiments (name, hypothesis, variable) "
+                          "VALUES ('cta-seguir', 'Pedir para seguir traz seguidores', 'chamada na legenda')"))
+        conn.execute(text("""
+            INSERT INTO experiment_posts (experiment_id, post_id, variant)
+            SELECT e.id, p.id, CASE WHEN p.external_id = '90000000000000001' THEN 'com' ELSE 'sem' END
+              FROM experiments e, posts p WHERE e.name = 'cta-seguir'
+        """))
     yield
     ingest.engine.dispose()
     migrate.engine.dispose()
