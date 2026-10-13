@@ -2,7 +2,11 @@
 
 Métricas de conteúdo sem chute: carrega exports do Instagram num Postgres, guarda a evolução de cada post e serve leituras prontas por uma API. Construído para rodar experimentos de publicação num perfil real, [@insidereismind](https://www.instagram.com/insidereismind/).
 
-**Estado:** carga, schema com histórico, anotações, experimentos e API prontos e testados. Faltam o painel web e o deploy.
+**Estado:** carga, schema com histórico, anotações, experimentos, API e painel web prontos. Falta o deploy público.
+
+![Topo do painel: a tese do perfil e a claquete da captura](docs/painel-topo.jpg)
+
+![Linha do tempo com o post fora da curva e as leituras](docs/painel-linha-do-tempo.jpg)
 
 ## Por que existe
 
@@ -25,6 +29,23 @@ Primeiro export real (18 Reels, 22 dias): mediana de 128 visualizações por pos
 | `GET /profiles/{handle}/experiments` | cada experimento com o desempenho por variante |
 
 A rota de experimentos descreve as variantes e não declara vencedor: com poucos posts por grupo a diferença costuma ser ruído.
+
+## Painel
+
+Next.js em `web/`. Lê a API no servidor e abre com uma frase, não com uma grade de números: o que é um post típico e quanto um único post pesa no total.
+
+- **Linha do tempo.** Um dia por coluna, com os dias sem publicar à vista. O post fora da curva vem noutra cor e rotulado; um botão tira-o da escala para ler os demais.
+- **O que os números dizem / o que não dá para concluir.** Frases geradas a partir dos dados, em `web/lib/findings.ts`. A segunda coluna é a mais importante: avisa quando a amostra é pequena, quando quase todos os posts saíram à mesma hora ou com as mesmas hashtags.
+- **Medianas por semana, duração e tema**, experimentos e a tabela completa, ordenável.
+
+Gráficos em SVG escritos à mão, sem biblioteca. As duas cores de dados foram validadas para daltonismo e contraste nos temas claro e escuro. Cada valor do gráfico também está na tabela.
+
+```bash
+cd web
+npm install
+cp .env.example .env.local     # API_URL e PROFILE_HANDLE
+npm run dev                    # http://localhost:3000, com a API a correr na 8000
+```
 
 ## Como rodar
 
@@ -71,6 +92,7 @@ profiles ─< posts ─< metrics            uma linha de metrics por post por di
 | `annotate.py` | anotações manuais e ligação a experimentos |
 | `analyze.py` | análise exploratória de um export, no terminal |
 | `db.py`, `api.py` | API em FastAPI |
+| `web/` | painel em Next.js (App Router, TypeScript, CSS puro) |
 | `tests/` | 25 testes, numa base própria criada e apagada a cada execução |
 
 ## Testes
@@ -88,6 +110,8 @@ Os testes criam `contentdeck_test`, aplicam as migrações, carregam o CSV de ex
 - Sem dados de retenção (tempo assistido): o export usado não os traz.
 - Comparar posts de idades diferentes ainda é injusto; "views nos primeiros 7 dias" depende de acumular mais capturas.
 - A API é só de leitura e não tem autenticação; a carga é feita pela linha de comandos.
+- O painel mostra um perfil só, definido por variável de ambiente.
+- As capturas de tela acima vêm do modo de desenvolvimento.
 
 ## Licença
 
