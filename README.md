@@ -27,6 +27,7 @@ Primeiro export real (18 Reels, 22 dias): mediana de 128 visualizações por pos
 | `GET /profiles/{handle}/weekly` | evolução por semana de publicação |
 | `GET /profiles/{handle}/insights` | posts fora da curva, seguidores por mil de alcance, composição das interações, desempenho por duração |
 | `GET /profiles/{handle}/experiments` | cada experimento com o desempenho por variante |
+| `GET /profiles/{handle}/deck` | tudo acima num pedido só; é o que o painel usa |
 
 A rota de experimentos descreve as variantes e não declara vencedor: com poucos posts por grupo a diferença costuma ser ruído.
 
@@ -117,7 +118,7 @@ profiles ─< posts ─< metrics            uma linha de metrics por post por di
 | `db.py`, `api.py` | API em FastAPI |
 | `vercel.json`, `prod.py` | deploy dos dois serviços; scripts contra a base publicada |
 | `web/` | painel em Next.js (App Router, TypeScript, CSS puro) |
-| `tests/` | 25 testes, numa base própria criada e apagada a cada execução |
+| `tests/` | 27 testes, numa base própria criada e apagada a cada execução |
 
 ## Testes
 

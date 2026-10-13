@@ -56,7 +56,7 @@ def test_summary(client):
     assert s["top_post_share"] == pytest.approx(14000 / 28600)
 
 
-@pytest.mark.parametrize("rota", ["summary", "posts", "themes", "weekly", "insights", "experiments"])
+@pytest.mark.parametrize("rota", ["summary", "posts", "themes", "weekly", "insights", "experiments", "deck"])
 def test_perfil_inexistente_da_404(client, rota):
     assert client.get(f"/profiles/ninguem/{rota}").status_code == 404
 
@@ -159,3 +159,15 @@ def test_experimentos(client):
     com, sem = e["variants"]
     assert (com["variant"], com["posts"], com["median_views"], com["follows"]) == ("com", 1, 14000, 35)
     assert (sem["variant"], sem["posts"], sem["median_views"], sem["follows"]) == ("sem", 2, 7300, 16)
+
+
+# ---------- /deck ----------
+
+def test_deck_junta_as_rotas(client):
+    deck = client.get(f"{BASE}/deck").json()
+    assert deck["summary"] == client.get(f"{BASE}/summary").json()
+    assert deck["posts"] == client.get(f"{BASE}/posts", params={"order": "asc", "limit": 200}).json()
+    assert deck["themes"] == client.get(f"{BASE}/themes").json()
+    assert deck["weekly"] == client.get(f"{BASE}/weekly").json()
+    assert deck["insights"] == client.get(f"{BASE}/insights").json()
+    assert deck["experiments"] == client.get(f"{BASE}/experiments").json()

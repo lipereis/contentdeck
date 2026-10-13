@@ -138,6 +138,15 @@ class Experiment(BaseModel):
     variants: list[VariantStats]
 
 
+class Deck(BaseModel):
+    summary: Summary
+    posts: list[Post]
+    themes: list[ThemeStats]
+    weekly: list[WeekStats]
+    insights: Insights
+    experiments: list[Experiment]
+
+
 # ---------- apoio ----------
 
 def profile_id(conn: Connection, handle: str, platform: str) -> int:
@@ -337,3 +346,20 @@ def experiments(handle: str, platform: str = "instagram", conn: Connection = Dep
         exp.variants.append(VariantStats(
             **{k: s[k] for k in ("variant", "posts", "median_views", "median_engagement_rate", "follows")}))
     return list(result.values())
+
+
+@app.get("/profiles/{handle}/deck", response_model=Deck)
+def deck(handle: str, platform: str = "instagram", conn: Connection = Depends(get_conn)):
+    """Tudo o que o painel mostra, num pedido só e numa única ligação à base.
+
+    O painel pedia seis rotas em paralelo; em serverless isso eram seis funções e
+    seis ligações novas por visita. As rotas individuais continuam a existir.
+    """
+    return Deck(
+        summary=summary(handle, platform, conn),
+        posts=list_posts(handle, platform, sort="published", order="asc", theme=None, limit=200, conn=conn),
+        themes=themes(handle, platform, conn),
+        weekly=weekly(handle, platform, conn),
+        insights=insights(handle, platform, outlier_factor=3.0, conn=conn),
+        experiments=experiments(handle, platform, conn),
+    )

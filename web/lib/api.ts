@@ -108,14 +108,6 @@ async function get<T>(path: string): Promise<T> {
 // cache() do React: página, metadados e cartão de prévia pedem os mesmos dados no
 // mesmo pedido; a API é consultada uma vez só.
 export const loadDeck = cache(async (handle: string): Promise<Deck> => {
-  const base = `/profiles/${encodeURIComponent(handle)}`;
-  const [summary, posts, themes, weekly, insights, experiments] = await Promise.all([
-    get<Summary>(`${base}/summary`),
-    get<Post[]>(`${base}/posts?sort=published&order=asc&limit=200`),
-    get<ThemeStats[]>(`${base}/themes`),
-    get<WeekStats[]>(`${base}/weekly`),
-    get<Insights>(`${base}/insights`),
-    get<Experiment[]>(`${base}/experiments`),
-  ]);
-  return { summary, posts, themes, weekly, insights, experiments };
+  // Um pedido só: em serverless, seis rotas seriam seis funções e seis ligações à base.
+  return get<Deck>(`/profiles/${encodeURIComponent(handle)}/deck`);
 });
