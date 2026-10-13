@@ -1,6 +1,7 @@
 // Tipos e leitura da API do ContentDeck (FastAPI). Corre só no servidor.
 
-export const API_URL = process.env.API_URL ?? "http://localhost:8000";
+// Na Vercel, API_INTERNAL_URL é injetada pela ligação privada entre os serviços.
+export const API_URL = process.env.API_INTERNAL_URL ?? process.env.API_URL ?? "http://localhost:8000";
 export const HANDLE = process.env.PROFILE_HANDLE ?? "insidereismind";
 
 export type Summary = {

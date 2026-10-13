@@ -2,7 +2,7 @@
 
 Métricas de conteúdo sem chute: carrega exports do Instagram num Postgres, guarda a evolução de cada post e serve leituras prontas por uma API. Construído para rodar experimentos de publicação num perfil real, [@insidereismind](https://www.instagram.com/insidereismind/).
 
-**Estado:** carga, schema com histórico, anotações, experimentos, API e painel web prontos. Falta o deploy público.
+**No ar:** [contentdeck-nine.vercel.app](https://contentdeck-nine.vercel.app) · API e documentação em [/api/docs](https://contentdeck-nine.vercel.app/api/docs)
 
 ![Topo do painel: a tese do perfil e a claquete da captura](docs/painel-topo.jpg)
 
@@ -45,6 +45,28 @@ cd web
 npm install
 cp .env.example .env.local     # API_URL e PROFILE_HANDLE
 npm run dev                    # http://localhost:3000, com a API a correr na 8000
+```
+
+## Deploy
+
+Tudo em planos gratuitos, num único projeto da Vercel:
+
+```
+contentdeck-nine.vercel.app
+├── /api/*  →  serviço "api"  (FastAPI, função Python)
+└── /*      →  serviço "web"  (Next.js)          base: Postgres na Neon
+```
+
+- `vercel.json` declara os dois serviços. O painel chama a API por uma ligação privada entre serviços (`API_INTERNAL_URL`), sem passar pela internet pública.
+- O prefixo `/api` é retirado antes de chegar ao FastAPI; `root_path` mantém a documentação a funcionar em `/api/docs`.
+- A base foi criada pela integração da Neon, que injeta `DATABASE_URL` no projeto. `db.py` normaliza o URL para o driver instalado e, em serverless, abre e fecha a ligação a cada pedido.
+- Cada push em `main` gera um deploy.
+
+Para atualizar os dados publicados depois de um novo export:
+
+```bash
+python prod.py ingest.py
+python prod.py annotate.py load
 ```
 
 ## Como rodar
@@ -92,6 +114,7 @@ profiles ─< posts ─< metrics            uma linha de metrics por post por di
 | `annotate.py` | anotações manuais e ligação a experimentos |
 | `analyze.py` | análise exploratória de um export, no terminal |
 | `db.py`, `api.py` | API em FastAPI |
+| `vercel.json`, `prod.py` | deploy dos dois serviços; scripts contra a base publicada |
 | `web/` | painel em Next.js (App Router, TypeScript, CSS puro) |
 | `tests/` | 25 testes, numa base própria criada e apagada a cada execução |
 
@@ -112,6 +135,7 @@ Os testes criam `contentdeck_test`, aplicam as migrações, carregam o CSV de ex
 - A API é só de leitura e não tem autenticação; a carga é feita pela linha de comandos.
 - O painel mostra um perfil só, definido por variável de ambiente.
 - As capturas de tela acima vêm do modo de desenvolvimento.
+- A base publicada e a local são independentes: a carga tem de ser feita nas duas.
 
 ## Licença
 

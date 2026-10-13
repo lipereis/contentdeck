@@ -6,6 +6,7 @@ Docs:    http://localhost:8000/docs
 Todas as rotas de leitura usam latest_metrics (a captura mais recente de cada
 post), exceto /posts/{id}/history, que devolve todas as capturas.
 """
+import os
 from datetime import date, datetime
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -14,7 +15,9 @@ from sqlalchemy import Connection, text
 
 from db import get_conn
 
-app = FastAPI(title="ContentDeck API", version="0.2.0")
+# Na Vercel a API fica publicada sob /api; o prefixo é retirado antes de chegar aqui,
+# e root_path faz a documentação (/api/docs) apontar para o sítio certo.
+app = FastAPI(title="ContentDeck API", version="0.2.0", root_path="/api" if os.getenv("VERCEL") else "")
 
 # Junção usada por quase todas as consultas: posts de um perfil com a captura mais recente
 POSTS_LATEST = "FROM posts p JOIN latest_metrics m ON m.post_id = p.id WHERE p.profile_id = :pid"

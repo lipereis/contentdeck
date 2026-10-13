@@ -4,15 +4,13 @@ Uso: python migrate.py
 schema.SQL é a versão 001; migrations/*.sql vêm depois, em ordem alfabética.
 O que já foi aplicado fica registado na tabela schema_migrations.
 """
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
+
+from db import engine
 
 HERE = Path(__file__).resolve().parent
-load_dotenv(HERE / ".env")
-engine = create_engine(os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/contentdeck"))
 
 
 def main():

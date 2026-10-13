@@ -4,13 +4,10 @@ import re
 from datetime import date
 
 import pandas as pd
-from sqlalchemy import create_engine, text
-from dotenv import load_dotenv
+from sqlalchemy import text
 
-# Carrega as variáveis do arquivo .env
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/contentdeck")
-engine = create_engine(DATABASE_URL)
+# Ligação única do projeto (lê o .env e normaliza o URL da base)
+from db import engine
 
 MONTHS = {m: i for i, m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(), 1)}
 

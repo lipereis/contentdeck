@@ -6,3 +6,16 @@ __pycache__/
 data/*.csv
 !data/instagram_export.csv
 !data/tiktok_export.csv
+
+# vercel
+.vercel
+.env*.local
+.env.vercel
+
+.vercel
+.env*
+
+# ferramentas de agente instaladas por integrações
+.agents
+.claude
+skills-lock.json

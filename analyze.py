@@ -9,9 +9,8 @@ import re
 import sys
 
 import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
 
+from db import engine
 from ingest import latest_export
 
 CSV = sys.argv[1] if len(sys.argv) > 1 else latest_export()
@@ -19,7 +18,6 @@ FAIXAS = dict(bins=[0, 20, 60, 600], labels=["até 20 s", "21–60 s", "mais de 
 ARTISTAS = "deftones|staind|post malone|tame impala|frank ocean|música"
 
 pd.set_option("display.width", 200)
-load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 df = pd.read_csv(CSV)
 df["quando"] = pd.to_datetime(df["Publish time"], format="%m/%d/%Y %H:%M")
@@ -30,7 +28,6 @@ df["dur"] = df["Duration (sec)"]
 df["faixa"] = pd.cut(df["dur"], **FAIXAS)
 
 try:
-    engine = create_engine(os.getenv("DATABASE_URL"))
     db = pd.read_sql("select (select count(*) from posts) posts, (select count(*) from metrics) metricas", engine)
     print("BANCO:", db.to_dict("records")[0], "| CSV:", len(df), "linhas")
 except Exception as e:  # análise funciona sem banco

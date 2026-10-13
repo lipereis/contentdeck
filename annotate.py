@@ -11,13 +11,13 @@ Colunas a preencher: theme, hook, hashtag_set, has_cta (sim/não), notes,
 experiment (nome do experimento) e variant (ex.: A, B, 15h, noite).
 A chave é o link do post: IDs numéricos longos são corrompidos por folhas de cálculo.
 """
-import os
 import sys
 from pathlib import Path
 
 import pandas as pd
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
+
+from db import engine
 
 HERE = Path(__file__).resolve().parent
 FILE = HERE / "data" / "annotations.csv"
@@ -25,8 +25,6 @@ FIELDS = ["theme", "hook", "hashtag_set", "has_cta", "notes"]
 TRUE = {"sim", "s", "yes", "y", "true", "1", "x"}
 FALSE = {"não", "nao", "n", "no", "false", "0"}
 
-load_dotenv(HERE / ".env")
-engine = create_engine(os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/contentdeck"))
 
 
 def template():
