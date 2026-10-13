@@ -34,6 +34,7 @@ A rota de experimentos descreve as variantes e não declara vencedor: com poucos
 
 Next.js em `web/`. Lê a API no servidor e abre com uma frase, não com uma grade de números: o que é um post típico e quanto um único post pesa no total.
 
+- **Página inteira no HTML.** O servidor espera os dados e entrega o relatório pronto, sem depender de JavaScript para o mostrar; o link tem cartão de prévia próprio (`opengraph-image`).
 - **Linha do tempo.** Um dia por coluna, com os dias sem publicar à vista. O post fora da curva vem noutra cor e rotulado; um botão tira-o da escala para ler os demais.
 - **O que os números dizem / o que não dá para concluir.** Frases geradas a partir dos dados, em `web/lib/findings.ts`. A segunda coluna é a mais importante: avisa quando a amostra é pequena, quando quase todos os posts saíram à mesma hora ou com as mesmas hashtags.
 - **Medianas por semana, duração e tema**, experimentos e a tabela completa, ordenável.

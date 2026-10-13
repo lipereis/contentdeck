@@ -1,5 +1,7 @@
 // Tipos e leitura da API do ContentDeck (FastAPI). Corre só no servidor.
 
+import { cache } from "react";
+
 // Na Vercel, API_INTERNAL_URL é injetada pela ligação privada entre os serviços.
 export const API_URL = process.env.API_INTERNAL_URL ?? process.env.API_URL ?? "http://localhost:8000";
 export const HANDLE = process.env.PROFILE_HANDLE ?? "insidereismind";
@@ -103,7 +105,9 @@ async function get<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function loadDeck(handle: string): Promise<Deck> {
+// cache() do React: página, metadados e cartão de prévia pedem os mesmos dados no
+// mesmo pedido; a API é consultada uma vez só.
+export const loadDeck = cache(async (handle: string): Promise<Deck> => {
   const base = `/profiles/${encodeURIComponent(handle)}`;
   const [summary, posts, themes, weekly, insights, experiments] = await Promise.all([
     get<Summary>(`${base}/summary`),
@@ -114,4 +118,4 @@ export async function loadDeck(handle: string): Promise<Deck> {
     get<Experiment[]>(`${base}/experiments`),
   ]);
   return { summary, posts, themes, weekly, insights, experiments };
-}
+});
